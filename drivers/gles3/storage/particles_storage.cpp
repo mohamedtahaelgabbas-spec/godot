@@ -739,10 +739,12 @@ void ParticlesStorage::_particles_process(Particles *p_particles, double p_delta
 	if (p_particles->frame_params_ubo == 0) {
 		glGenBuffers(1, &p_particles->frame_params_ubo);
 		glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLES_FRAME_UNIFORM_LOCATION, p_particles->frame_params_ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, p_particles->frame_params_ubo); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		GLES3::Utilities::get_singleton()->buffer_allocate_data(GL_UNIFORM_BUFFER, p_particles->frame_params_ubo, sizeof(ParticlesFrameParams), &frame_params, GL_STREAM_DRAW, "Particle Frame UBO");
 	} else {
 		// Update per-frame UBO.
 		glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLES_FRAME_UNIFORM_LOCATION, p_particles->frame_params_ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, p_particles->frame_params_ubo); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(ParticlesFrameParams), &frame_params, GL_STREAM_DRAW);
 	}
 
@@ -1047,6 +1049,7 @@ void ParticlesStorage::update_particles() {
 	GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLES_GLOBALS_UNIFORM_LOCATION, global_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	while (particle_update_list.first()) {

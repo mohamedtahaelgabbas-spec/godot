@@ -726,6 +726,7 @@ void RasterizerSceneGLES3::_setup_sky(const RenderDataGLES3 *p_render_data, cons
 
 	bool sun_scatter_enabled = environment_get_fog_enabled(p_render_data->environment) && environment_get_fog_sun_scatter(p_render_data->environment) > 0.001;
 	glBindBufferBase(GL_UNIFORM_BUFFER, SKY_DIRECTIONAL_LIGHT_UNIFORM_LOCATION, sky_globals.directional_light_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, sky_globals.directional_light_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (shader_data->uses_light || sun_scatter_enabled) {
 		sky_globals.directional_light_count = 0;
 		for (int i = 0; i < (int)p_lights.size(); i++) {
@@ -819,6 +820,7 @@ void RasterizerSceneGLES3::_setup_sky(const RenderDataGLES3 *p_render_data, cons
 
 	if (p_render_data->view_count > 1) {
 		glBindBufferBase(GL_UNIFORM_BUFFER, SKY_MULTIVIEW_UNIFORM_LOCATION, scene_state.multiview_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, scene_state.multiview_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
@@ -917,6 +919,7 @@ void RasterizerSceneGLES3::_draw_sky(RID p_env, const Projection &p_projection, 
 
 	if (p_use_multiview) {
 		glBindBufferBase(GL_UNIFORM_BUFFER, SKY_MULTIVIEW_UNIFORM_LOCATION, scene_state.multiview_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, scene_state.multiview_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
@@ -1525,9 +1528,11 @@ void RasterizerSceneGLES3::_update_scene_ubo(GLuint &p_ubo_buffer, GLuint p_inde
 	if (p_ubo_buffer == 0) {
 		glGenBuffers(1, &p_ubo_buffer);
 		glBindBufferBase(GL_UNIFORM_BUFFER, p_index, p_ubo_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, p_ubo_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		GLES3::Utilities::get_singleton()->buffer_allocate_data(GL_UNIFORM_BUFFER, p_ubo_buffer, p_size, p_source_data, GL_STREAM_DRAW, p_name);
 	} else {
 		glBindBufferBase(GL_UNIFORM_BUFFER, p_index, p_ubo_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, p_ubo_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBufferData(GL_UNIFORM_BUFFER, p_size, p_source_data, GL_STREAM_DRAW);
 	}
 
@@ -2109,31 +2114,37 @@ void RasterizerSceneGLES3::_setup_lights(const RenderDataGLES3 *p_render_data, b
 	// TODO, to avoid stalls, should rotate between 3 buffers based on frame index.
 	// TODO, consider mapping the buffer as in 2D
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_OMNILIGHT_UNIFORM_LOCATION, scene_state.omni_light_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.omni_light_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (r_omni_light_count) {
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightData) * r_omni_light_count, scene_state.omni_lights);
 	}
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_SPOTLIGHT_UNIFORM_LOCATION, scene_state.spot_light_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.spot_light_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (r_spot_light_count) {
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightData) * r_spot_light_count, scene_state.spot_lights);
 	}
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_AREALIGHT_UNIFORM_LOCATION, scene_state.area_light_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.area_light_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (r_area_light_count) {
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightData) * r_area_light_count, scene_state.area_lights);
 	}
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_DIRECTIONAL_LIGHT_UNIFORM_LOCATION, scene_state.directional_light_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.directional_light_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (r_directional_light_count) {
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(DirectionalLightData) * MAX_DIRECTIONAL_LIGHTS, scene_state.directional_lights, GL_STREAM_DRAW);
 	}
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_POSITIONAL_SHADOW_UNIFORM_LOCATION, scene_state.positional_shadow_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.positional_shadow_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (num_positional_shadows) {
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ShadowData) * num_positional_shadows, scene_state.positional_shadows);
 	}
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_DIRECTIONAL_SHADOW_UNIFORM_LOCATION, scene_state.directional_shadow_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, scene_state.directional_shadow_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	if (r_directional_shadow_count) {
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(DirectionalShadowData) * MAX_DIRECTIONAL_LIGHTS, scene_state.directional_shadows, GL_STREAM_DRAW);
 	}
@@ -2347,6 +2358,7 @@ void RasterizerSceneGLES3::_render_shadow_pass(RID p_light, RID p_shadow_atlas, 
 	GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_GLOBALS_UNIFORM_LOCATION, global_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	scene_state.reset_gl_state();
@@ -2494,6 +2506,7 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 
 	GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_GLOBALS_UNIFORM_LOCATION, global_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	Color clear_color;
 	if (!is_reflection_probe && rb->render_target.is_valid()) {
@@ -2526,9 +2539,11 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 		// Only create if using 3D
 		glGenBuffers(1, &scene_state.tonemap_buffer);
 		glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_TONEMAP_UNIFORM_LOCATION, scene_state.tonemap_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, scene_state.tonemap_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		GLES3::Utilities::get_singleton()->buffer_allocate_data(GL_UNIFORM_BUFFER, scene_state.tonemap_buffer, sizeof(SceneState::TonemapUBO), &tonemap_ubo, GL_STREAM_DRAW, "Tonemap UBO");
 	} else {
 		glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_TONEMAP_UNIFORM_LOCATION, scene_state.tonemap_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, scene_state.tonemap_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(SceneState::TonemapUBO), &tonemap_ubo, GL_STREAM_DRAW);
 	}
 
@@ -4078,6 +4093,7 @@ void RasterizerSceneGLES3::render_particle_collider_heightfield(RID p_collider, 
 	GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_GLOBALS_UNIFORM_LOCATION, global_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	scene_state.reset_gl_state();
@@ -4124,6 +4140,7 @@ void RasterizerSceneGLES3::_render_uv2(const PagedArray<RenderGeometryInstance *
 		GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_GLOBALS_UNIFORM_LOCATION, global_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		scene_state.reset_gl_state();

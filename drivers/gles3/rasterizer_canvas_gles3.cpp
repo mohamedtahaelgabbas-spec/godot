@@ -292,6 +292,7 @@ void RasterizerCanvasGLES3::canvas_render_items(RID p_to_render_target, Item *p_
 
 	if (light_count > 0) {
 		glBindBufferBase(GL_UNIFORM_BUFFER, LIGHT_UNIFORM_LOCATION, state.canvas_instance_data_buffers[state.current_data_buffer_index].light_ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, state.canvas_instance_data_buffers[state.current_data_buffer_index].light_ubo); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 #ifdef WEB_ENABLED
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightUniform) * light_count, state.light_uniforms);
@@ -374,11 +375,13 @@ void RasterizerCanvasGLES3::canvas_render_items(RID p_to_render_target, Item *p_
 		state_buffer.tex_to_sdf = 1.0 / ((canvas_scale.x + canvas_scale.y) * 0.5);
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, BASE_UNIFORM_LOCATION, state.canvas_instance_data_buffers[state.current_data_buffer_index].state_ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, state.canvas_instance_data_buffers[state.current_data_buffer_index].state_ubo); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(StateBuffer), &state_buffer, GL_STREAM_DRAW);
 
 		GLuint global_buffer = material_storage->global_shader_parameters_get_uniform_buffer();
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, GLOBAL_UNIFORM_LOCATION, global_buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, global_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 

@@ -2803,6 +2803,7 @@ static void bind_uniforms_generic(const Vector<RID> &p_textures, const Vector<Sh
 void CanvasMaterialData::bind_uniforms() {
 	// Bind Material Uniforms
 	glBindBufferBase(GL_UNIFORM_BUFFER, RasterizerCanvasGLES3::MATERIAL_UNIFORM_LOCATION, uniform_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	bind_uniforms_generic(texture_cache, shader_data->texture_uniforms, 1, filter_from_uniform_canvas, repeat_from_uniform_canvas); // Start at GL_TEXTURE1 because texture slot 0 is used by the base texture
 }
@@ -2955,6 +2956,7 @@ GLES3::MaterialData *GLES3::_create_sky_material_func(ShaderData *p_shader) {
 void SkyMaterialData::bind_uniforms() {
 	// Bind Material Uniforms
 	glBindBufferBase(GL_UNIFORM_BUFFER, SKY_MATERIAL_UNIFORM_LOCATION, uniform_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	bind_uniforms_generic(texture_cache, shader_data->texture_uniforms);
 }
@@ -3272,6 +3274,7 @@ GLES3::MaterialData *GLES3::_create_scene_material_func(ShaderData *p_shader) {
 void SceneMaterialData::bind_uniforms() {
 	// Bind Material Uniforms
 	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_MATERIAL_UNIFORM_LOCATION, uniform_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	bind_uniforms_generic(texture_cache, shader_data->texture_uniforms);
 }
@@ -3374,6 +3377,7 @@ GLES3::MaterialData *GLES3::_create_particles_material_func(ShaderData *p_shader
 void ParticleProcessMaterialData::bind_uniforms() {
 	// Bind Material Uniforms
 	glBindBufferBase(GL_UNIFORM_BUFFER, GLES3::PARTICLES_MATERIAL_UNIFORM_LOCATION, uniform_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	bind_uniforms_generic(texture_cache, shader_data->texture_uniforms, 1); // Start at GL_TEXTURE1 because texture slot 0 is reserved for the heightmap texture.
 }
@@ -3479,6 +3483,7 @@ void TexBlitMaterialData::update_parameters(const HashMap<StringName, Variant> &
 
 void TexBlitMaterialData::bind_uniforms() {
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniform_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer); // JOB SRO: some emulator GLES encoders (LDPlayer) ignore the generic binding glBindBufferBase sets
 
 	bind_uniforms_generic(texture_cache, shader_data->texture_uniforms, 1);
 }
